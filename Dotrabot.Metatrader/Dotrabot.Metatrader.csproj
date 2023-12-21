@@ -2,13 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>dotrabot_metatrader</RootNamespace>
+    <RootNamespace>Dotrabot.Metatrader</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NetMQ" Version="4.0.1.13" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MT4\" />
   </ItemGroup>
 
 </Project>

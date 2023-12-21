@@ -8,16 +8,13 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);COPIER</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Netina.Stomp.Client" Version="2.0.5" />
-    <PackageReference Include="NetMQ" Version="4.0.1.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.2" />
-    <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dotrabot.Metatrader\Dotrabot.Metatrader.csproj" />
   </ItemGroup>
 
 </Project>

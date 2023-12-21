@@ -1,7 +1,7 @@
-﻿<Application x:Class="dotrabot.NET.App"
+﻿<Application x:Class="Dotrabot.Application.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:dotrabot.NET"
+             xmlns:local="clr-namespace:Dotrabot.Application"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          
