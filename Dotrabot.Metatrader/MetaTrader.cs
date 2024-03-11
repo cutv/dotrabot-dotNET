@@ -35,6 +35,10 @@ namespace Dotrabot
             String json = JsonConvert.SerializeObject(trade);
             _pushSocket.SendFrame(json);
         }
+        public void SendTradeAsync(string json)
+        {
+            _pushSocket.SendFrame(json);
+        }
 
 
 

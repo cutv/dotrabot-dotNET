@@ -1,14 +1,11 @@
-﻿using dotrabot.NET;
-using Dotrabot.MT5.Schema;
-using Dotrabot.StompClient;
+﻿using Dotrabot.StompClient;
 using Dotrabot.StompClient.Schema;
 using Netina.Stomp.Client;
 using Netina.Stomp.Client.Interfaces;
-using Newtonsoft.Json;
+using Rananu.Shared;
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
-using System.Windows.Threading;
+using System.Windows.Documents;
 
 namespace Dotrabot.Application
 {
@@ -18,31 +15,78 @@ namespace Dotrabot.Application
     public partial class MainWindow : Window
     {
         private MetaTrader _metaTrader = new MetaTrader();
-        private DotrabotStompClient _stompClient = new DotrabotStompClient();
+        IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader");
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            _metaTrader.ReceiveAsync(async (payload) =>
+            _stompClient.OnConnect += async (send, message) =>
+                {
+                    Debug.WriteLine("Connected");
+                    await _stompClient.SubscribeAsync<object>(3, (message) =>
+                    {
+                        var json = message.ToString();
+                        if (json != null)
+                            _metaTrader.SendTradeAsync(json);
+                    });
+                };
+             _stompClient.ConnectAsync(new Dictionary<String,String>());
+            Debug.WriteLine("Hello");
+#if COPIER
+
+
+#endif
+#if MASTER
+#endif
+
+            _metaTrader.ReceiveAsync(async (message) =>
             {
-                Debug.WriteLine(payload);
-                var tradeMessage= JsonConvert.DeserializeObject<TradeMessage>(payload);
-               await _stompClient.BroadcastTradeAsync(tradeMessage);
+                Debug.WriteLine(message);
+                if (String.IsNullOrEmpty(message))
+                    return;
+                var data = NewtonsoftConvert.Instance.DeserializeObject<Message>(message);
+                switch (data.Type)
+                {
+                    case PayloadType.TradingServer:
+                        var tradingServerPayload = NewtonsoftConvert.Instance.DeserializeObject<TradingServerMessage>(data.Payload);
+                        await _stompClient.CreateOrUpdateTradingServerAsync(tradingServerPayload);
+                        break;
+                    case PayloadType.Trade:
+                        var tradeMessage = NewtonsoftConvert.Instance.DeserializeObject<TradeMessage>(data.Payload);
+                        tradeMessage.traderId = 1;
+                        await _stompClient.BroadcastTradeAsync(tradeMessage);
+                        break;
+                    case PayloadType.Trader:
+                        break;
+                    case PayloadType.Account:
+                    case PayloadType.Terminal:
+                    case PayloadType.Balance:
+                        var traderPayload = NewtonsoftConvert.Instance.DeserializeObject<Dictionary<String, String>>(data.Payload);
+                        var traderMessage = new TraderMessage();
+                        if (data.Type == PayloadType.Account)
+                            traderMessage.Account = traderPayload;
+                        if (data.Type == PayloadType.Terminal)
+                            traderMessage.Terminal = traderPayload;
+                        if (data.Type == PayloadType.Balance)
+                            traderMessage.Balance = traderPayload;
+                        await _stompClient.UpdateTraderAsync(1, traderMessage);
+
+                        break;
+                }
+
             });
 
-            _stompClient.ConnectAsync(() =>
-            {
-                _stompClient.SubscribeAsync<String>(1, (message) =>
-                {
-                    Debug.WriteLine(message);
-                });
-            });
+
         }
 
-
+        private async void send_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange range = new TextRange(payload.Document.ContentStart, payload.Document.ContentEnd);
+            _metaTrader.SendTradeAsync(range.Text);
+        }
     }
 }

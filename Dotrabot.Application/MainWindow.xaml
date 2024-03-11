@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <RichTextBox x:Name="log"/>
+        <StackPanel Orientation="Vertical">
+            <RichTextBox Name="payload" Height="300" />
+            <Button Name="send" Click="send_Click" Width="50" Height="25">Send</Button>
+        </StackPanel>
+
     </Grid>
 </Window>

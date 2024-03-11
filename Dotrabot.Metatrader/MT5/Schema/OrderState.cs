@@ -1,4 +1,5 @@
-﻿using Dotrabot.Converter;
+﻿using Rananu.Shared;
+using Rananu.Shared.Converter;
 using System.Text.Json.Serialization;
 
 namespace Dotrabot.MT5.Schema
@@ -39,6 +40,5 @@ namespace Dotrabot.MT5.Schema
 
         private OrderState(int value) =>
                 Value = value;
-
     }
 }

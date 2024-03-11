@@ -1,5 +1,6 @@
-﻿using Dotrabot.Converter;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Rananu.Shared;
+using Rananu.Shared.Converter;
 
 namespace Dotrabot.MT5.Schema
 {

@@ -16,4 +16,8 @@
     <Folder Include="MT4\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\rananu-dotNet\Common\Rananu.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dotrabot
+namespace Dotrabot.Restful.TradingServer
 {
-    public interface IEnum<T>
+    public class TradingServerResult
     {
-        public T Value { get; }
     }
 }

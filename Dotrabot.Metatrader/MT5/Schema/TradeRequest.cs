@@ -1,8 +1,4 @@
-﻿using Dotrabot.Converter;
-using System;
-using System.Text.Json.Serialization;
-
-namespace Dotrabot.MT5.Schema
+﻿namespace Dotrabot.MT5.Schema
 {
     public class TradeRequest
     {

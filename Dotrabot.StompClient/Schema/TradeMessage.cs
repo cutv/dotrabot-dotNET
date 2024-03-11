@@ -28,6 +28,6 @@ namespace Dotrabot.StompClient.Schema
         public ulong? position { get; set; }
         public ulong? position_by { get; set; }
         public int? slippage { get; set; }
-        public ulong? terminalCreatedAt { get; set; }
+        public ulong? open_time { get; set; }
     }
 }
