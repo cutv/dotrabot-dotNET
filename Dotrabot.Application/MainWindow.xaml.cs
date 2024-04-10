@@ -24,17 +24,29 @@ namespace Dotrabot.Application
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            _stompClient.OnConnect += async (send, message) =>
+            _stompClient.OnConnect += async (sender, message) =>
                 {
                     Debug.WriteLine("Connected");
                     await _stompClient.SubscribeAsync<object>(3, (message) =>
                     {
-                        var json = message.ToString();
-                        if (json != null)
-                            _metaTrader.SendTradeAsync(json);
+                        var payload = message.ToString();
+                        if (payload != null)
+                            _metaTrader.SendAsync(payload);
                     });
                 };
-             _stompClient.ConnectAsync(new Dictionary<String,String>());
+            _stompClient.OnError += (sender, message) =>
+            {
+                Debug.WriteLine(message.ToString());
+            };
+            _stompClient.OnClose += (sender, message) =>
+            {
+                Debug.WriteLine(message.ToString());
+            };
+            _stompClient.OnReconnect += (sender, message) =>
+            {
+                Debug.WriteLine(message.ToString());
+            };
+            await _stompClient.ConnectAsync(new Dictionary<String, String>());
             Debug.WriteLine("Hello");
 #if COPIER
 
@@ -83,10 +95,6 @@ namespace Dotrabot.Application
 
         }
 
-        private async void send_Click(object sender, RoutedEventArgs e)
-        {
-            TextRange range = new TextRange(payload.Document.ContentStart, payload.Document.ContentEnd);
-            _metaTrader.SendTradeAsync(range.Text);
-        }
+
     }
 }

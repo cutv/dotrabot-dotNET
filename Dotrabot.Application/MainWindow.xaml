@@ -7,10 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <RichTextBox Name="payload" Height="300" />
-            <Button Name="send" Click="send_Click" Width="50" Height="25">Send</Button>
-        </StackPanel>
-
+        <TabControl>
+            <TabItem Header="General">
+                <Label Content="Content goes here..." />
+            </TabItem> 
+            <TabItem Header="Security" />
+            <TabItem Header="Details" />
+        </TabControl>
     </Grid>
 </Window>

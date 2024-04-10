@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\rananu-dotNet\Shared\Rananu.Shared.csproj" />
     <ProjectReference Include="..\Dotrabot.Metatrader\Dotrabot.Metatrader.csproj" />
     <ProjectReference Include="..\Dotrabot.Restful\Dotrabot.Restful.csproj" />
     <ProjectReference Include="..\Dotrabot.StompClient\Dotrabot.StompClient.csproj" />

@@ -30,12 +30,7 @@ namespace Dotrabot
             }, TaskCreationOptions.LongRunning).Start();
         }
 
-        public void SendTradeAsync(TradeRequest trade)
-        {
-            String json = JsonConvert.SerializeObject(trade);
-            _pushSocket.SendFrame(json);
-        }
-        public void SendTradeAsync(string json)
+        public void SendAsync(string json)
         {
             _pushSocket.SendFrame(json);
         }

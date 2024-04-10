@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\rananu-dotNet\Common\Rananu.Shared.csproj" />
+    <ProjectReference Include="..\..\rananu-dotNet\Shared\Rananu.Shared.csproj" />
   </ItemGroup>
 
 </Project>

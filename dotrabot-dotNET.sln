@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dotrabot.Application", "Dot
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dotrabot.StompClient", "Dotrabot.StompClient\Dotrabot.StompClient.csproj", "{FDE3CE10-7D90-4226-89EC-7574E41E6482}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rananu.Shared", "..\rananu-dotNet\Common\Rananu.Shared.csproj", "{D4A03162-45B9-4938-A8EF-E3915C36BD3E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dotrabot.Restful", "Dotrabot.Restful\Dotrabot.Restful.csproj", "{18FD9874-B965-43D4-AEE7-ABDF45E9CC2D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DotrabotEA", "DotrabotEA\DotrabotEA.vcxproj", "{27D6A531-FE89-48F7-A3E0-EDD02B9DAD07}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rananu.Shared", "..\rananu-dotNet\Shared\Rananu.Shared.csproj", "{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,18 +61,6 @@ Global
 		{FDE3CE10-7D90-4226-89EC-7574E41E6482}.Release|x64.Build.0 = Release|Any CPU
 		{FDE3CE10-7D90-4226-89EC-7574E41E6482}.Release|x86.ActiveCfg = Release|Any CPU
 		{FDE3CE10-7D90-4226-89EC-7574E41E6482}.Release|x86.Build.0 = Release|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Debug|x64.Build.0 = Debug|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Debug|x86.Build.0 = Debug|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Release|x64.ActiveCfg = Release|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Release|x64.Build.0 = Release|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Release|x86.ActiveCfg = Release|Any CPU
-		{D4A03162-45B9-4938-A8EF-E3915C36BD3E}.Release|x86.Build.0 = Release|Any CPU
 		{18FD9874-B965-43D4-AEE7-ABDF45E9CC2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{18FD9874-B965-43D4-AEE7-ABDF45E9CC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18FD9874-B965-43D4-AEE7-ABDF45E9CC2D}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -97,6 +85,18 @@ Global
 		{27D6A531-FE89-48F7-A3E0-EDD02B9DAD07}.Release|x64.Build.0 = Release|x64
 		{27D6A531-FE89-48F7-A3E0-EDD02B9DAD07}.Release|x86.ActiveCfg = Release|Win32
 		{27D6A531-FE89-48F7-A3E0-EDD02B9DAD07}.Release|x86.Build.0 = Release|Win32
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Debug|x64.Build.0 = Debug|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Debug|x86.Build.0 = Debug|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Release|x64.ActiveCfg = Release|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Release|x64.Build.0 = Release|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Release|x86.ActiveCfg = Release|Any CPU
+		{0631A277-2EF7-4B9C-935E-4BBF4CE99A27}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
