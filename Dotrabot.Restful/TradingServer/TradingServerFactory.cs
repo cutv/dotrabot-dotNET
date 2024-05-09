@@ -4,11 +4,11 @@ namespace Dotrabot.Restful.TradingServer
 {
     public class TradingServerFactory : AbstractFactory
     {
-        public TradingServerFactory() : base("trading-servers")
+        public TradingServerFactory(IDotrabotClientConfig config) : base("trading-servers",config)
         {
         }
 
-        public async Task<TradingServerResult> createOrUpdate(TradingServerParam param)
+        public async Task<TradingServerResult> CreateOrUpdate(TradingServerParam param)
         {
             RestRequest restRequest = new RestRequest()
             {

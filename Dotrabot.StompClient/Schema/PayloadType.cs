@@ -12,11 +12,17 @@ namespace Dotrabot.StompClient.Schema
 {
     public enum PayloadType
     {
+        [EnumMember(Value = "Pong")]
+        Pong,
+
         [EnumMember(Value = "TradingServer")]
         TradingServer,
 
         [EnumMember(Value = "Trade")]
         Trade,
+
+        [EnumMember(Value = "AckTrade")]
+        AckTrade,
 
         [EnumMember(Value = "Trader")]
         Trader,

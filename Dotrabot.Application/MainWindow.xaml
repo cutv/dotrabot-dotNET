@@ -7,12 +7,20 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <TabControl>
+       
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <TextBox Name="txtClientSecret" HorizontalAlignment="Left" Text="v1.public.eyJzdWIiOiIyNSIsImF1ZCI6InRyYWRlciIsImV4cCI6IjIwMjUtMDUtMDJUMTM6NDA6NDYuODI5Mjk5NFoiLCJpYXQiOiIyMDI1LTA1LTAyVDEzOjQwOjQ2LjgyOTI5OTRaIn2HxO_vYhHzPiWX3Acfg86sN1JI2sczIwWe-4FoZZy83dQ9Ln-ObxZ_oRJKGwQrQoTiHfqFjp3MyCYXSluuMupzD7kSxdCeNhOEa8jWa5Ka80jMic2XoGoSkPHUBlFDjzM3RlfLQzhG2AHek4oDPCAffbeZX9hTjyHS91J9LgxR0DgzibMpAJDC0MguMJ6nqxTXkL-6aHQesDM82mrbGTUtMnLgB0MUZW8X8DeOrPaKboHQwJW06neFh2Cgb0F_uTdy-9u210ECzRWWGoXuHduoZKDEaVDFD1tLFxmbK6A2pBPdl4z6ggTy71awEzklR3S_XAznkxOhOVpMIiQoAkPJ.eyJraWQiOiI5NmU1Y2UxZS1hOGEzLTRlY2UtOTM5My1kMjlkZDdlNTEzZTgifQ" MaxHeight="30"/>
+        <TextBlock Name="tblName"  Text="fsdfsdfsdfsdf" HorizontalAlignment="Left"  MaxHeight="30" Grid.Row="1"/>
+        <!--<TabControl>
             <TabItem Header="General">
                 <Label Content="Content goes here..." />
             </TabItem> 
             <TabItem Header="Security" />
             <TabItem Header="Details" />
-        </TabControl>
+        </TabControl>-->
     </Grid>
 </Window>

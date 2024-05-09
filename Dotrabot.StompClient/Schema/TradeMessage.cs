@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dotrabot.StompClient.Schema
 {
-    public class TradeMessage:BaseMessage
+    public class TradeMessage : BaseMessage
     {
         public long? traderId { get; set; }
         public String? serverName { get; set; }
@@ -17,6 +17,8 @@ namespace Dotrabot.StompClient.Schema
         public String? symbol { get; set; }
         public double? volume { get; set; }
         public double? price { get; set; }
+        public double? bid { get; set; }
+        public double? ask { get; set; }
         public double? stoplimit { get; set; }
         public double? sl { get; set; }
         public double? tp { get; set; }
@@ -29,5 +31,15 @@ namespace Dotrabot.StompClient.Schema
         public ulong? position_by { get; set; }
         public int? slippage { get; set; }
         public ulong? open_time { get; set; }
+
+        public ulong? deal { get; set; }           // Deal ticket
+        public int? order_type { get; set; }     // Order type
+        public int? order_state { get; set; }    // Order state
+        public int? deal_type { get; set; }      // Deal type
+        public int? time_type { get; set; }      // Order type by action period
+        public String? time_expiration { get; set; }// Order expiration time
+        public double? price_trigger { get; set; }  // Stop limit order activation price
+        public double? price_sl { get; set; }       // Stop Loss level
+        public double? price_tp { get; set; }       // Take Profit level
     }
 }

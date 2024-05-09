@@ -1,38 +1,45 @@
-﻿using Dotrabot.StompClient;
+﻿using Dotrabot.Restful;
+using Dotrabot.Restful.Trader;
+using Dotrabot.StompClient;
 using Dotrabot.StompClient.Schema;
-using Netina.Stomp.Client;
 using Netina.Stomp.Client.Interfaces;
 using Rananu.Shared;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace Dotrabot.Application
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDotrabotClientConfig
     {
         private MetaTrader _metaTrader = new MetaTrader();
-        IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader");
+        //IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader");
+        IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader");
+        private TraderResult _trader;
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
 
+        public string Authorization => txtClientSecret.Text;
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            TraderFactory traderFactory = new TraderFactory(this);
+            _trader = await traderFactory.findByMe();
+            tblName.Text = _trader.Name;
             _stompClient.OnConnect += async (sender, message) =>
                 {
-                    Debug.WriteLine("Connected");
-                    await _stompClient.SubscribeAsync<object>(3, (message) =>
-                    {
-                        var payload = message.ToString();
-                        if (payload != null)
-                            _metaTrader.SendAsync(payload);
-                    });
+                    //Debug.WriteLine("Connected");
+                    //await _stompClient.SubscribeAsync<object>(_trader.Id, (message) =>
+                    //{
+                    //    var payload = message.ToString();
+                    //    if (payload != null)
+                    //        _metaTrader.SendAsync(payload);
+                    //});
                 };
             _stompClient.OnError += (sender, message) =>
             {
@@ -47,13 +54,7 @@ namespace Dotrabot.Application
                 Debug.WriteLine(message.ToString());
             };
             await _stompClient.ConnectAsync(new Dictionary<String, String>());
-            Debug.WriteLine("Hello");
-#if COPIER
 
-
-#endif
-#if MASTER
-#endif
 
             _metaTrader.ReceiveAsync(async (message) =>
             {
@@ -69,8 +70,16 @@ namespace Dotrabot.Application
                         break;
                     case PayloadType.Trade:
                         var tradeMessage = NewtonsoftConvert.Instance.DeserializeObject<TradeMessage>(data.Payload);
-                        tradeMessage.traderId = 1;
+                        tradeMessage.traderId = _trader.Id;
                         await _stompClient.BroadcastTradeAsync(tradeMessage);
+                        break;
+                    case PayloadType.AckTrade:
+                        var ackMessage = NewtonsoftConvert.Instance.DeserializeObject<AckTradeMessage>(data.Payload);
+                        ackMessage.traderId = _trader.Id;
+                        await _stompClient.AckTradeAsync(ackMessage.magic.Value, ackMessage);
+                        break;
+                    case PayloadType.Pong:
+                        var pongAtMillis = NewtonsoftConvert.Instance.DeserializeObject<Int64>(data.Payload);
                         break;
                     case PayloadType.Trader:
                         break;
@@ -85,7 +94,7 @@ namespace Dotrabot.Application
                             traderMessage.Terminal = traderPayload;
                         if (data.Type == PayloadType.Balance)
                             traderMessage.Balance = traderPayload;
-                        await _stompClient.UpdateTraderAsync(1, traderMessage);
+                        await _stompClient.UpdateTraderAsync(_trader.Id, traderMessage);
 
                         break;
                 }
