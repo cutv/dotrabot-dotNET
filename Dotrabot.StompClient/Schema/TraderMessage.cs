@@ -11,12 +11,12 @@ namespace Dotrabot.StompClient.Schema
     public class TraderMessage
     {
         [JsonProperty(PropertyName = "account")]
-        public Dictionary<String, String>? Account { get; set; }
+        public Dictionary<String, Object>? Account { get; set; }
  
         [JsonProperty(PropertyName = "terminal")]
-        public Dictionary<String, String>? Terminal { get; set; }
+        public Dictionary<String, Object>? Terminal { get; set; }
 
         [JsonProperty(PropertyName = "balance")]
-        public Dictionary<String, String>? Balance { get; set; }
+        public Dictionary<String, Object>? Balance { get; set; }
     }
 }

@@ -56,50 +56,36 @@ namespace Dotrabot.Application
             await _stompClient.ConnectAsync(new Dictionary<String, String>());
 
 
-            _metaTrader.ReceiveAsync(async (message) =>
+            _metaTrader.ReceiveAsync((Action<string>)(async (message) =>
             {
                 Debug.WriteLine(message);
-                if (String.IsNullOrEmpty(message))
+                if (string.IsNullOrEmpty(message))
                     return;
-                var data = NewtonsoftConvert.Instance.DeserializeObject<Message>(message);
-                switch (data.Type)
+                var payload = NewtonsoftConvert.Instance.DeserializeObject<Message>(message);
+                PayloadType type = payload.Type;
+                Dictionary<string, object> data = payload.Data;
+                switch (type)
                 {
                     case PayloadType.TradingServer:
-                        var tradingServerPayload = NewtonsoftConvert.Instance.DeserializeObject<TradingServerMessage>(data.Payload);
-                        await _stompClient.CreateOrUpdateTradingServerAsync(tradingServerPayload);
+                        await _stompClient.CreateOrUpdateTradingServerAsync(data);
                         break;
                     case PayloadType.Trade:
-                        var tradeMessage = NewtonsoftConvert.Instance.DeserializeObject<TradeMessage>(data.Payload);
-                        tradeMessage.traderId = _trader.Id;
-                        await _stompClient.BroadcastTradeAsync(tradeMessage);
+                        data.Add("trader_id", (object)_trader.Id);
+                        await _stompClient.BroadcastTradeAsync(data);
                         break;
                     case PayloadType.AckTrade:
-                        var ackMessage = NewtonsoftConvert.Instance.DeserializeObject<AckTradeMessage>(data.Payload);
-                        ackMessage.traderId = _trader.Id;
-                        await _stompClient.AckTradeAsync(ackMessage.magic.Value, ackMessage);
+                        data.Add("trader_id", (object)_trader.Id);
+                        await _stompClient.AckTradeAsync((long)data.GetValueOrDefault<string, object>("magic"), data);
                         break;
                     case PayloadType.Pong:
-                        var pongAtMillis = NewtonsoftConvert.Instance.DeserializeObject<Int64>(data.Payload);
+                        var pongAtMillis = data.GetValueOrDefault<string, object>("pongAtMillis");
                         break;
                     case PayloadType.Trader:
-                        break;
-                    case PayloadType.Account:
-                    case PayloadType.Terminal:
-                    case PayloadType.Balance:
-                        var traderPayload = NewtonsoftConvert.Instance.DeserializeObject<Dictionary<String, String>>(data.Payload);
-                        var traderMessage = new TraderMessage();
-                        if (data.Type == PayloadType.Account)
-                            traderMessage.Account = traderPayload;
-                        if (data.Type == PayloadType.Terminal)
-                            traderMessage.Terminal = traderPayload;
-                        if (data.Type == PayloadType.Balance)
-                            traderMessage.Balance = traderPayload;
-                        await _stompClient.UpdateTraderAsync(_trader.Id, traderMessage);
-
+                        await _stompClient.UpdateTraderAsync(_trader.Id, data);
                         break;
                 }
 
-            });
+            }));
 
 
         }
