@@ -15,8 +15,8 @@ namespace Dotrabot.Application
     public partial class MainWindow : Window, IDotrabotClientConfig
     {
         private MetaTrader _metaTrader = new MetaTrader();
-        //IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader");
-        IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader");
+        IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader");
+        //IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader");
         private TraderResult _trader;
         public MainWindow()
         {
@@ -63,26 +63,30 @@ namespace Dotrabot.Application
                     return;
                 var payload = NewtonsoftConvert.Instance.DeserializeObject<Message>(message);
                 PayloadType type = payload.Type;
-                Dictionary<string, object> data = payload.Data;
+                string json = payload.Data;
                 switch (type)
                 {
                     case PayloadType.TradingServer:
-                        await _stompClient.CreateOrUpdateTradingServerAsync(data);
+                        await _stompClient.CreateOrUpdateTradingServerAsync(json);
                         break;
-                    case PayloadType.Trade:
-                        data.Add("trader_id", (object)_trader.Id);
-                        await _stompClient.BroadcastTradeAsync(data);
+                    //case PayloadType.Trade:
+                    //    data.Add("trader_id", (object)_trader.Id);
+                    //    await _stompClient.BroadcastTradeAsync(data);
+                    //    break;
+                    //case PayloadType.AckTrade:
+                    //    data.Add("trader_id", (object)_trader.Id);
+                    //    await _stompClient.AckTradeAsync((long)data.GetValueOrDefault<string, object>("magic"), data);
+                    //    break;
+                    //case PayloadType.Pong:
+                    //    var pongAtMillis = data.GetValueOrDefault<string, object>("pongAtMillis");
+                    //    break;
+                    //case PayloadType.Trader:
+                    //    await _stompClient.UpdateTraderAsync(_trader.Id, data);
+                    //    break;
+                    case PayloadType.HistoryOrder:
+                        await _stompClient.CreateOrUpdateHistoryOrderAsync(_trader.Id, json);
                         break;
-                    case PayloadType.AckTrade:
-                        data.Add("trader_id", (object)_trader.Id);
-                        await _stompClient.AckTradeAsync((long)data.GetValueOrDefault<string, object>("magic"), data);
-                        break;
-                    case PayloadType.Pong:
-                        var pongAtMillis = data.GetValueOrDefault<string, object>("pongAtMillis");
-                        break;
-                    case PayloadType.Trader:
-                        await _stompClient.UpdateTraderAsync(_trader.Id, data);
-                        break;
+
                 }
 
             }));

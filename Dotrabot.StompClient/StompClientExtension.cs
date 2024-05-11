@@ -1,6 +1,8 @@
 ﻿using Dotrabot.StompClient.Schema;
 using Netina.Stomp.Client;
 using Netina.Stomp.Client.Interfaces;
+using Rananu.Shared;
+using System.Text;
 
 namespace Dotrabot.StompClient
 {
@@ -28,10 +30,22 @@ namespace Dotrabot.StompClient
             return stompClient.SendAsync(payload, $"/traders/{traderId}", new Dictionary<String, String>());
         }
 
-        public static Task CreateOrUpdateTradingServerAsync(this IStompClient stompClient, Dictionary<String, Object> payload)
+        public static Task CreateOrUpdateTradingServerAsync(this IStompClient stompClient, string payload)
         {
-            return stompClient.SendAsync(payload, $"/trading-servers", new Dictionary<String, String>());
+            Dictionary<String, String> headers = new Dictionary<string, string>();
+            headers.Add("content-type", "application/json;charset=UTF-8");
+            headers.Add("content-length", Encoding.UTF8.GetByteCount(payload).ToString());
+            return stompClient.SendAsync(payload, $"/trading-servers", headers);
         }
-    }
+
+        public static Task CreateOrUpdateHistoryOrderAsync(this IStompClient stompClient, long traderId, string payload)
+        {
+            Dictionary<String, String> headers = new Dictionary<string, string>();
+            headers.Add("content-type", "application/json;charset=UTF-8");
+            headers.Add("content-length", Encoding.UTF8.GetByteCount(payload).ToString());
+            
+            return stompClient.SendAsync(payload, $"/traders/{traderId}/histories/orders", headers);
+        }
+    }   
 
 }

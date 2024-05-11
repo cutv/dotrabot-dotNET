@@ -9,6 +9,6 @@ namespace Dotrabot.StompClient.Schema
         public PayloadType Type { get; set; }
 
         [JsonProperty(PropertyName = "data")]
-        public Dictionary<String, Object> Data { get; set; }
+        public String Data { get; set; }
     }
 }
