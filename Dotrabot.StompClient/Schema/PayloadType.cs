@@ -26,9 +26,15 @@ namespace Dotrabot.StompClient.Schema
 
         [EnumMember(Value = "trader")]
         Trader,
+        [EnumMember(Value = "position")]
+        Position,
         [EnumMember(Value = "history_order")]
         HistoryOrder,
         [EnumMember(Value = "history_deal")]
         HistoryDeal,
+
+        [EnumMember(Value = "expert_advisor")]
+        EA,
+
     }
 }

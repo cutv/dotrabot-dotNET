@@ -6,6 +6,7 @@ using Netina.Stomp.Client.Interfaces;
 using Rananu.Shared;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace Dotrabot.Application
 {
@@ -33,13 +34,21 @@ namespace Dotrabot.Application
             tblName.Text = _trader.Name;
             _stompClient.OnConnect += async (sender, message) =>
                 {
-                    //Debug.WriteLine("Connected");
-                    //await _stompClient.SubscribeAsync<object>(_trader.Id, (message) =>
-                    //{
-                    //    var payload = message.ToString();
-                    //    if (payload != null)
-                    //        _metaTrader.SendAsync(payload);
-                    //});
+                    Debug.WriteLine("Connected");
+                    await _stompClient.SubscribeMeAsync<object>(_trader.Id, (message) =>
+                    {
+                        var payload = message.ToString();
+                        if (payload != null)
+                            _metaTrader.SendAsync(payload);
+                    });
+
+                    Debug.WriteLine("Connected");
+                    await _stompClient.SubscribeEAAsync<object>((message) =>
+                    {
+                        var payload = message.ToString();
+                        if (payload != null)
+                            _metaTrader.SendAsync(payload);
+                    });
                 };
             _stompClient.OnError += (sender, message) =>
             {
@@ -69,22 +78,26 @@ namespace Dotrabot.Application
                     case PayloadType.TradingServer:
                         await _stompClient.CreateOrUpdateTradingServerAsync(json);
                         break;
-                    //case PayloadType.Trade:
-                    //    data.Add("trader_id", (object)_trader.Id);
-                    //    await _stompClient.BroadcastTradeAsync(data);
-                    //    break;
-                    //case PayloadType.AckTrade:
-                    //    data.Add("trader_id", (object)_trader.Id);
-                    //    await _stompClient.AckTradeAsync((long)data.GetValueOrDefault<string, object>("magic"), data);
-                    //    break;
-                    //case PayloadType.Pong:
-                    //    var pongAtMillis = data.GetValueOrDefault<string, object>("pongAtMillis");
-                    //    break;
-                    //case PayloadType.Trader:
-                    //    await _stompClient.UpdateTraderAsync(_trader.Id, data);
-                    //    break;
+                    case PayloadType.Trade:
+                        await _stompClient.BroadcastTradeAsync(json);
+                        break;
+                    case PayloadType.AckTrade:
+                        await _stompClient.AckTradeAsync(json);
+                        break;
+                    case PayloadType.Pong:
+                        var pongAtMillis = Int64.Parse(json);
+                        break;
+                    case PayloadType.Trader:
+                        await _stompClient.UpdateTraderAsync(_trader.Id, json);
+                        break;
+                    case PayloadType.Position:
+                        await _stompClient.CreateOrUpdatePositionAsync(_trader.Id, json);
+                        break;
                     case PayloadType.HistoryOrder:
                         await _stompClient.CreateOrUpdateHistoryOrderAsync(_trader.Id, json);
+                        break;
+                    case PayloadType.HistoryDeal:
+                        await _stompClient.CreateOrUpdateHistoryDealAsync(_trader.Id, json);
                         break;
 
                 }
