@@ -24,39 +24,45 @@ namespace Dotrabot.StompClient
             });
         }
 
-        public static Task BroadcastTradeAsync(this IStompClient stompClient, String payload)
+        public static Task SendAsync(this IStompClient stompClient, string payload)
         {
-            return stompClient.SendAsync(payload, "/trades", NewHeaders(payload));
-        }
-        public static Task AckTradeAsync(this IStompClient stompClient, String payload)
-        {
-            return stompClient.SendAsync(payload, $"/trades/ack", NewHeaders(payload));
-        }
-
-        public static Task UpdateTraderAsync(this IStompClient stompClient, long traderId, String payload)
-        {
-            return stompClient.SendAsync(payload, $"/traders/{traderId}", NewHeaders(payload));
-        }
-
-        public static Task CreateOrUpdateTradingServerAsync(this IStompClient stompClient, string payload)
-        {
-            return stompClient.SendAsync(payload, $"/trading-servers", NewHeaders(payload));
-        }
-        public static Task CreateOrUpdatePositionAsync(this IStompClient stompClient, long traderId, String payload)
-        {
-            return stompClient.SendAsync(payload, $"/traders/{traderId}/histories/positions", NewHeaders(payload));
+            return stompClient.SendAsync(payload, "/", NewHeaders(payload));
         }
 
 
-        public static Task CreateOrUpdateHistoryOrderAsync(this IStompClient stompClient, long traderId, String payload)
-        {
-            return stompClient.SendAsync(payload, $"/traders/{traderId}/histories/orders", NewHeaders(payload));
-        }
+        //public static Task BroadcastTradeAsync(this IStompClient stompClient, String payload)
+        //{
+        //    return stompClient.SendAsync(payload, "/trades", NewHeaders(payload));
+        //}
+        //public static Task AckTradeAsync(this IStompClient stompClient, String payload)
+        //{
+        //    return stompClient.SendAsync(payload, $"/trades/ack", NewHeaders(payload));
+        //}
 
-        public static Task CreateOrUpdateHistoryDealAsync(this IStompClient stompClient, long traderId, string payload)
-        {
-            return stompClient.SendAsync(payload, $"/traders/{traderId}/histories/deals", NewHeaders(payload));
-        }
+        //public static Task UpdateTraderAsync(this IStompClient stompClient,  String payload)
+        //{
+        //    return stompClient.SendAsync(payload, $"/traders", NewHeaders(payload));
+        //}
+
+        //public static Task CreateOrUpdateTradingServerAsync(this IStompClient stompClient, string payload)
+        //{
+        //    return stompClient.SendAsync(payload, $"/trading-servers", NewHeaders(payload));
+        //}
+        //public static Task CreateOrUpdatePositionAsync(this IStompClient stompClient,  String payload)
+        //{
+        //    return stompClient.SendAsync(payload, $"/traders/histories/positions", NewHeaders(payload));
+        //}
+
+
+        //public static Task CreateOrUpdateHistoryOrderAsync(this IStompClient stompClient,  String payload)
+        //{
+        //    return stompClient.SendAsync(payload, $"/traders/histories/orders", NewHeaders(payload));
+        //}
+
+        //public static Task CreateOrUpdateHistoryDealAsync(this IStompClient stompClient,  string payload)
+        //{
+        //    return stompClient.SendAsync(payload, $"/traders/positions", NewHeaders(payload));
+        //}
 
         public static IDictionary<String, String> NewHeaders(string payload)
         {

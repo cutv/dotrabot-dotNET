@@ -32,6 +32,7 @@ namespace Dotrabot.Application
             TraderFactory traderFactory = new TraderFactory(this);
             _trader = await traderFactory.findByMe();
             tblName.Text = _trader.Name;
+
             _stompClient.OnConnect += async (sender, message) =>
                 {
                     Debug.WriteLine("Connected");
@@ -70,38 +71,7 @@ namespace Dotrabot.Application
                 Debug.WriteLine(message);
                 if (string.IsNullOrEmpty(message))
                     return;
-                var payload = NewtonsoftConvert.Instance.DeserializeObject<Message>(message);
-                PayloadType type = payload.Type;
-                string json = payload.Data;
-                switch (type)
-                {
-                    case PayloadType.TradingServer:
-                        await _stompClient.CreateOrUpdateTradingServerAsync(json);
-                        break;
-                    case PayloadType.Trade:
-                        await _stompClient.BroadcastTradeAsync(json);
-                        break;
-                    case PayloadType.AckTrade:
-                        await _stompClient.AckTradeAsync(json);
-                        break;
-                    case PayloadType.Pong:
-                        var pongAtMillis = Int64.Parse(json);
-                        break;
-                    case PayloadType.Trader:
-                        await _stompClient.UpdateTraderAsync(_trader.Id, json);
-                        break;
-                    case PayloadType.Position:
-                        await _stompClient.CreateOrUpdatePositionAsync(_trader.Id, json);
-                        break;
-                    case PayloadType.HistoryOrder:
-                        await _stompClient.CreateOrUpdateHistoryOrderAsync(_trader.Id, json);
-                        break;
-                    case PayloadType.HistoryDeal:
-                        await _stompClient.CreateOrUpdateHistoryDealAsync(_trader.Id, json);
-                        break;
-
-                }
-
+                await _stompClient.SendAsync(message);
             }));
 
 
