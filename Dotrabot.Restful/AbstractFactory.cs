@@ -16,7 +16,7 @@ namespace Dotrabot.Restful
         public AbstractFactory(String resource, IDotrabotClientConfig config)
         {
             _config = config;
-            var options = new RestClientOptions($"http://14.225.207.213/api/{resource}")
+            var options = new RestClientOptions($"http://localhost:8080/api/{resource}")
             {
             };
             _restClient = new RestClient(options);

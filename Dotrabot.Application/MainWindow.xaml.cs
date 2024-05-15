@@ -1,4 +1,5 @@
 ﻿using Dotrabot.Restful;
+using Dotrabot.Restful.Configuration;
 using Dotrabot.Restful.Trader;
 using Dotrabot.StompClient;
 using Dotrabot.StompClient.Schema;
@@ -29,6 +30,8 @@ namespace Dotrabot.Application
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            ConfigurationFactory configurationFactory = new ConfigurationFactory(this);
+            ConfigurationResult configuration = await configurationFactory.FindLatest();
             TraderFactory traderFactory = new TraderFactory(this);
             _trader = await traderFactory.findByMe();
             tblName.Text = _trader.Name;
@@ -42,8 +45,16 @@ namespace Dotrabot.Application
                         if (payload != null)
                             _metaTrader.SendAsync(payload);
                     });
+                    //foreach (var item in configuration.middleware.subscribeTopics)
+                    //{
+                    //    await _stompClient.SubscribeAsync(item, new Dictionary<String, String>(), (sender, message) =>
+                    //    {
+                    //        var payload = message.ToString();
+                    //        if (payload != null)
+                    //            _metaTrader.SendAsync(payload);
+                    //    });
+                    //}
 
-                    Debug.WriteLine("Connected");
                     await _stompClient.SubscribeEAAsync<object>((message) =>
                     {
                         var payload = message.ToString();
