@@ -30,9 +30,9 @@ namespace Dotrabot
             }, TaskCreationOptions.LongRunning).Start();
         }
 
-        public void SendAsync(string json)
+        public Task SendAsync(string json)
         {
-            _pushSocket.SendFrame(json);
+            return Task.Run(() => _pushSocket.SendFrame(json));
         }
 
 

@@ -8,6 +8,7 @@ using Rananu.Shared;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Markup;
+using Websocket.Client;
 
 namespace Dotrabot.Application
 {
@@ -39,28 +40,26 @@ namespace Dotrabot.Application
             _stompClient.OnConnect += async (sender, message) =>
                 {
                     Debug.WriteLine("Connected");
-                    await _stompClient.SubscribeMeAsync<object>(_trader.Id, (message) =>
+                    await _stompClient.SubscribeMeAsync<String>(_trader.Id, async (message) =>
                     {
-                        var payload = message.ToString();
+                        String payload = message;
                         if (payload != null)
-                            _metaTrader.SendAsync(payload);
+                             _metaTrader.SendAsync(payload);
+                        Debug.WriteLine(payload);
                     });
-                    //foreach (var item in configuration.middleware.subscribeTopics)
-                    //{
-                    //    await _stompClient.SubscribeAsync(item, new Dictionary<String, String>(), (sender, message) =>
-                    //    {
-                    //        var payload = message.ToString();
-                    //        if (payload != null)
-                    //            _metaTrader.SendAsync(payload);
-                    //    });
-                    //}
 
-                    await _stompClient.SubscribeEAAsync<object>((message) =>
+                    foreach (var item in configuration.middleware.subscribeTopics)
                     {
-                        var payload = message.ToString();
-                        if (payload != null)
-                            _metaTrader.SendAsync(payload);
-                    });
+                        await _stompClient.SubscribeAsync("/ea", new Dictionary<String, String>(), (sender, message) =>
+                            {
+                                var payload = message.Body;
+                                if (payload != null)
+                                    _metaTrader.SendAsync(payload);
+                                Debug.WriteLine(payload);
+                            });
+                    }
+
+
                 };
             _stompClient.OnError += (sender, message) =>
             {
@@ -74,7 +73,8 @@ namespace Dotrabot.Application
             {
                 Debug.WriteLine(message.ToString());
             };
-            await _stompClient.ConnectAsync(new Dictionary<String, String>());
+            Dictionary<string, string> headers = new Dictionary<String, String>();
+            await _stompClient.ConnectAsync(headers);
 
 
             _metaTrader.ReceiveAsync((Action<string>)(async (message) =>
@@ -82,7 +82,7 @@ namespace Dotrabot.Application
                 Debug.WriteLine(message);
                 if (string.IsNullOrEmpty(message))
                     return;
-                await _stompClient.SendAsync(message);
+                await _stompClient.SendAsync(configuration.middleware.topic, message);
             }));
 
 

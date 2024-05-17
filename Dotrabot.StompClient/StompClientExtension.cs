@@ -24,9 +24,9 @@ namespace Dotrabot.StompClient
             });
         }
 
-        public static Task SendAsync(this IStompClient stompClient, string payload)
+        public static Task SendAsync(this IStompClient stompClient, String topic, String payload)
         {
-            return stompClient.SendAsync(payload, "/", NewHeaders(payload));
+            return stompClient.SendAsync(payload, topic, NewHeaders(payload));
         }
 
 
