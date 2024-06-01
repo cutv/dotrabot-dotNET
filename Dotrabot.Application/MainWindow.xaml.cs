@@ -4,8 +4,12 @@ using Dotrabot.Restful.Trader;
 using Dotrabot.StompClient;
 using Dotrabot.StompClient.Schema;
 using Netina.Stomp.Client.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Rananu.Shared;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Markup;
 using Websocket.Client;
@@ -18,9 +22,11 @@ namespace Dotrabot.Application
     public partial class MainWindow : Window, IDotrabotClientConfig
     {
         private MetaTrader _metaTrader = new MetaTrader();
-        IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader");
+
+        IStompClient _stompClient;
         //IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader");
         private TraderResult _trader;
+        private readonly ConcurrentDictionary<String, byte> _dictionary;
         public MainWindow()
         {
             InitializeComponent();
@@ -31,6 +37,10 @@ namespace Dotrabot.Application
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            Dictionary<string, string> headers = new Dictionary<String, String>();
+            headers.Add("Trader-Authorization", Authorization);
+            _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader", headers: headers);
+            StompClientExtension.Authorization = Authorization;
             ConfigurationFactory configurationFactory = new ConfigurationFactory(this);
             ConfigurationResult configuration = await configurationFactory.FindLatest();
             TraderFactory traderFactory = new TraderFactory(this);
@@ -40,17 +50,9 @@ namespace Dotrabot.Application
             _stompClient.OnConnect += async (sender, message) =>
                 {
                     Debug.WriteLine("Connected");
-                    await _stompClient.SubscribeMeAsync<String>(_trader.Id, async (message) =>
+                    foreach (var item in configuration.middleware.subscribe_topics)
                     {
-                        String payload = message;
-                        if (payload != null)
-                             _metaTrader.SendAsync(payload);
-                        Debug.WriteLine(payload);
-                    });
-
-                    foreach (var item in configuration.middleware.subscribeTopics)
-                    {
-                        await _stompClient.SubscribeAsync("/ea", new Dictionary<String, String>(), (sender, message) =>
+                        await _stompClient.SubscribeAsync(item, new Dictionary<String, String>(), (sender, message) =>
                             {
                                 var payload = message.Body;
                                 if (payload != null)
@@ -73,19 +75,44 @@ namespace Dotrabot.Application
             {
                 Debug.WriteLine(message.ToString());
             };
-            Dictionary<string, string> headers = new Dictionary<String, String>();
-            await _stompClient.ConnectAsync(headers);
+            Dictionary<string, string> header = new Dictionary<String, String>();
+
+            await _stompClient.ConnectAsync(header);
 
 
             _metaTrader.ReceiveAsync((Action<string>)(async (message) =>
             {
+                if (message.StartsWith("{\"type\":\"initialize\""))
+                {
+                    JObject jObject = JObject.Parse(message);
+                    String json = (String)jObject.SelectToken("data");
+                    jObject = JObject.Parse(json);
+                    String server = (String)jObject.SelectToken("server");
+                    String login = (String)jObject.SelectToken("login");
+                    String topic = $"/servers/{server}/traders/{login}";
+                    if (!_dictionary.ContainsKey(topic))
+                        SubscribeTopicAsync(topic);
+
+                }
                 Debug.WriteLine(message);
                 if (string.IsNullOrEmpty(message))
                     return;
-                await _stompClient.SendAsync(configuration.middleware.topic, message);
+                await _stompClient.SendAsync(configuration.middleware.Topic, message);
             }));
 
 
+        }
+
+        private async void SubscribeTopicAsync(String topic)
+        {
+            await _stompClient.SubscribeAsync(topic, new Dictionary<String, String>(), (sender, message) =>
+            {
+                var payload = message.Body;
+                if (payload != null)
+                    _metaTrader.SendAsync(payload);
+                Debug.WriteLine(payload);
+            });
+            _dictionary.TryAdd(topic, 0);
         }
 
 

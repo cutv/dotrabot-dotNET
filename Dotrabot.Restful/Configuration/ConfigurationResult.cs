@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -26,8 +27,9 @@ namespace Dotrabot.Restful.Configuration
     }
     public class MiddlewareConfiguration
     {
-        public List<String> subscribeTopics { get; set; }
-        public String topic { get; set; }
+        public IEnumerable<String> subscribe_topics { get; set; }
+        [JsonProperty("topic")]
+        public String Topic { get; set; }
     }
 
 }

@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Netina.Stomp.Client" Version="2.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\rananu-dotNet\Shared\Rananu.Shared.csproj" />
+    <ProjectReference Include="C:\Users\Administrator\Downloads\Netina.Stomp.Client-main\Netina.Stomp.Client-main\source\Netina.Stomp.Client.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,7 @@ namespace Dotrabot.StompClient
 {
     public static class StompClientExtension
     {
+        public static String Authorization;
         public static Task SubscribeMeAsync<T>(this IStompClient stompClient, long traderId, Action<T> onMessage)
         {
             return stompClient.SubscribeAsync<T>($"/traders/{traderId}", new Dictionary<String, String>(), (sender, message) =>
@@ -29,46 +30,12 @@ namespace Dotrabot.StompClient
             return stompClient.SendAsync(payload, topic, NewHeaders(payload));
         }
 
-
-        //public static Task BroadcastTradeAsync(this IStompClient stompClient, String payload)
-        //{
-        //    return stompClient.SendAsync(payload, "/trades", NewHeaders(payload));
-        //}
-        //public static Task AckTradeAsync(this IStompClient stompClient, String payload)
-        //{
-        //    return stompClient.SendAsync(payload, $"/trades/ack", NewHeaders(payload));
-        //}
-
-        //public static Task UpdateTraderAsync(this IStompClient stompClient,  String payload)
-        //{
-        //    return stompClient.SendAsync(payload, $"/traders", NewHeaders(payload));
-        //}
-
-        //public static Task CreateOrUpdateTradingServerAsync(this IStompClient stompClient, string payload)
-        //{
-        //    return stompClient.SendAsync(payload, $"/trading-servers", NewHeaders(payload));
-        //}
-        //public static Task CreateOrUpdatePositionAsync(this IStompClient stompClient,  String payload)
-        //{
-        //    return stompClient.SendAsync(payload, $"/traders/histories/positions", NewHeaders(payload));
-        //}
-
-
-        //public static Task CreateOrUpdateHistoryOrderAsync(this IStompClient stompClient,  String payload)
-        //{
-        //    return stompClient.SendAsync(payload, $"/traders/histories/orders", NewHeaders(payload));
-        //}
-
-        //public static Task CreateOrUpdateHistoryDealAsync(this IStompClient stompClient,  string payload)
-        //{
-        //    return stompClient.SendAsync(payload, $"/traders/positions", NewHeaders(payload));
-        //}
-
         public static IDictionary<String, String> NewHeaders(string payload)
         {
             Dictionary<String, String> headers = new Dictionary<string, string>();
             headers.Add("content-type", "application/json;charset=UTF-8");
             headers.Add("content-length", Encoding.UTF8.GetByteCount(payload).ToString());
+            //headers.Add("Authorization", Authorization);
             return headers;
         }
 
