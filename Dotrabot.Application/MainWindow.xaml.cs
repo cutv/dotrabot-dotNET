@@ -26,7 +26,7 @@ namespace Dotrabot.Application
         IStompClient _stompClient;
         //IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader");
         private TraderResult _trader;
-        private readonly ConcurrentDictionary<String, byte> _dictionary;
+        private readonly ConcurrentDictionary<String, byte> _dictionary=new ConcurrentDictionary<string, byte>();
         public MainWindow()
         {
             InitializeComponent();
@@ -90,9 +90,12 @@ namespace Dotrabot.Application
                     String server = (String)jObject.SelectToken("server");
                     String login = (String)jObject.SelectToken("login");
                     String topic = $"/servers/{server}/traders/{login}";
-                    if (!_dictionary.ContainsKey(topic))
-                        SubscribeTopicAsync(topic);
 
+                    if (!String.IsNullOrEmpty(server)
+                        && !String.IsNullOrEmpty(login)
+                        && !_dictionary.ContainsKey(topic)
+                        )
+                        SubscribeTopicAsync(topic);
                 }
                 Debug.WriteLine(message);
                 if (string.IsNullOrEmpty(message))
