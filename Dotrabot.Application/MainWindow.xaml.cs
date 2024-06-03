@@ -25,7 +25,6 @@ namespace Dotrabot.Application
 
         IStompClient _stompClient;
         //IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader");
-        private TraderResult _trader;
         private readonly ConcurrentDictionary<String, byte> _dictionary=new ConcurrentDictionary<string, byte>();
         public MainWindow()
         {
@@ -43,9 +42,9 @@ namespace Dotrabot.Application
             StompClientExtension.Authorization = Authorization;
             ConfigurationFactory configurationFactory = new ConfigurationFactory(this);
             ConfigurationResult configuration = await configurationFactory.FindLatest();
-            TraderFactory traderFactory = new TraderFactory(this);
-            _trader = await traderFactory.findByMe();
-            tblName.Text = _trader.Name;
+            //TraderFactory traderFactory = new TraderFactory(this);
+            //_trader = await traderFactory.findByMe();
+           // tblName.Text = _trader.Name;
 
             _stompClient.OnConnect += async (sender, message) =>
                 {
