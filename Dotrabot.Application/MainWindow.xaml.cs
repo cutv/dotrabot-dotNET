@@ -88,8 +88,7 @@ namespace Dotrabot.Application
                     jObject = JObject.Parse(json);
                     String server = (String)jObject.SelectToken("server");
                     String login = (String)jObject.SelectToken("login");
-                    String chartSymbol = (String)jObject.SelectToken("chart_symbol");
-                    String topic = $"/servers/{server}/traders/{login}/symbols/{chartSymbol}";
+                    String topic = $"/servers/{server}/traders/{login}";
 
                     if (!String.IsNullOrEmpty(server)
                         && !String.IsNullOrEmpty(login)
