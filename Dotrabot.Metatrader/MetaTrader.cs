@@ -2,19 +2,20 @@
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
+using System.Net.WebSockets;
 
 namespace Dotrabot
 {
     public class MetaTrader
     {
-        private PushSocket _pushSocket;
+        private PublisherSocket _publisherSocket;
         private PullSocket _pullSocket;
 
 
         public MetaTrader()
         {
-            _pushSocket = new PushSocket("@tcp://*:863");
-            _pullSocket = new PullSocket(">tcp://localhost:831");
+            _publisherSocket = new PublisherSocket("@tcp://*:863");
+            _pullSocket = new PullSocket("@tcp://*:831");
         }
 
 
@@ -30,12 +31,13 @@ namespace Dotrabot
             }, TaskCreationOptions.LongRunning).Start();
         }
 
-        public Task SendAsync(string json)
+        public Task SendAsync(string topic, string payload)
         {
-            return Task.Run(() => _pushSocket.SendFrame(json));
+            return Task.Run(() => _publisherSocket.SendMoreFrame(topic).SendFrame(payload));
         }
-
-
-
+        public Task SendAsync(string payload)
+        {
+            return Task.Run(() => _publisherSocket.SendMoreFrame("").SendFrame(payload));
+        }
     }
 }

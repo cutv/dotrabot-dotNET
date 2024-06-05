@@ -25,7 +25,7 @@ namespace Dotrabot.Application
 
         IStompClient _stompClient;
         //IStompClient _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader");
-        private readonly ConcurrentDictionary<String, byte> _dictionary=new ConcurrentDictionary<string, byte>();
+        private readonly ConcurrentDictionary<String, byte> _dictionary = new ConcurrentDictionary<string, byte>();
         public MainWindow()
         {
             InitializeComponent();
@@ -44,7 +44,7 @@ namespace Dotrabot.Application
             ConfigurationResult configuration = await configurationFactory.FindLatest();
             //TraderFactory traderFactory = new TraderFactory(this);
             //_trader = await traderFactory.findByMe();
-           // tblName.Text = _trader.Name;
+            // tblName.Text = _trader.Name;
 
             _stompClient.OnConnect += async (sender, message) =>
                 {
@@ -81,7 +81,7 @@ namespace Dotrabot.Application
 
             _metaTrader.ReceiveAsync((Action<string>)(async (message) =>
             {
-                if (message.StartsWith("{\"type\":\"initialize\""))
+                if (message.Contains("\"type\":\"initialize\""))
                 {
                     JObject jObject = JObject.Parse(message);
                     String json = (String)jObject.SelectToken("data");
@@ -111,8 +111,17 @@ namespace Dotrabot.Application
             {
                 var payload = message.Body;
                 if (payload != null)
-                    _metaTrader.SendAsync(payload);
-                Debug.WriteLine(payload);
+                {
+                    JObject jObject = JObject.Parse(payload);
+                    String server = (String)jObject.SelectToken("server");
+                    String login = (String)jObject.SelectToken("login");
+                    String topic = $"/servers/{server}/traders/{login}";
+                    _metaTrader.SendAsync(topic, payload);
+                    Debug.WriteLine(payload);
+
+                }
+
+
             });
             _dictionary.TryAdd(topic, 0);
         }
