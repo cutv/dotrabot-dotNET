@@ -38,7 +38,11 @@ namespace Dotrabot.Application
         {
             Dictionary<string, string> headers = new Dictionary<String, String>();
             headers.Add("Trader-Authorization", Authorization);
-            _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader", headers: headers);
+#if DEV
+             _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader", headers: headers);
+#else
+            _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader", headers: headers);
+#endif
             StompClientExtension.Authorization = Authorization;
             ConfigurationFactory configurationFactory = new ConfigurationFactory(this);
             ConfigurationResult configuration = await configurationFactory.FindLatest();
