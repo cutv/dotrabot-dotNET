@@ -76,6 +76,7 @@ namespace Dotrabot.Application
             };
             _stompClient.OnReconnect += (sender, message) =>
             {
+                _dictionary.Clear();
                 Debug.WriteLine(message.ToString());
             };
             Dictionary<string, string> header = new Dictionary<String, String>();
