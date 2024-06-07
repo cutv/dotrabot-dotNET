@@ -11,6 +11,7 @@ namespace Dotrabot
         private PublisherSocket _publisherSocket;
         private PullSocket _pullSocket;
 
+        public bool IsConnected { get; set; }
 
         public MetaTrader()
         {
@@ -25,8 +26,12 @@ namespace Dotrabot
             {
                 while (true)
                 {
-                    string payload = _pullSocket.ReceiveFrameString();
-                    onReceived.Invoke(payload);
+                    if (IsConnected)
+                    {
+                        string payload = _pullSocket.ReceiveFrameString();
+                        onReceived.Invoke(payload);
+                    }
+                  
                 }
             }, TaskCreationOptions.LongRunning).Start();
         }

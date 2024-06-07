@@ -52,9 +52,12 @@ namespace Dotrabot.Application
 
             _stompClient.OnConnect += async (sender, message) =>
                 {
+                    _metaTrader.IsConnected = true;
                     Debug.WriteLine("Connected");
                     foreach (var item in configuration.middleware.subscribe_topics)
                     {
+                        if (_dictionary.ContainsKey(item))
+                            continue;
                         await _stompClient.SubscribeAsync(item, new Dictionary<String, String>(), (sender, message) =>
                             {
                                 var payload = message.Body;
@@ -62,22 +65,24 @@ namespace Dotrabot.Application
                                     _metaTrader.SendAsync(payload);
                                 Debug.WriteLine(payload);
                             });
+                        _dictionary.TryAdd(item, 0);
                     }
 
 
                 };
             _stompClient.OnError += (sender, message) =>
             {
-                Debug.WriteLine(message.ToString());
+                Debug.WriteLine("OnError" + message.ToString());
             };
             _stompClient.OnClose += (sender, message) =>
             {
-                Debug.WriteLine(message.ToString());
+               _metaTrader.IsConnected=false;
+                Debug.WriteLine("OnClose" + message.ToString());
             };
             _stompClient.OnReconnect += (sender, message) =>
             {
                 _dictionary.Clear();
-                Debug.WriteLine(message.ToString());
+                Debug.WriteLine("OnReconnect" + message.ToString());
             };
             Dictionary<string, string> header = new Dictionary<String, String>();
 
