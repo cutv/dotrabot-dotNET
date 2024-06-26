@@ -6,19 +6,19 @@ using System.Net.WebSockets;
 
 namespace Dotrabot
 {
-    public class MetaTrader
+    public class ZeroMQ
     {
         private PublisherSocket _publisherSocket;
         private PullSocket _pullSocket;
         private NetMQPoller _netMQPoller;
 
-        public bool IsConnected { get; set; }
+        public bool Receive { get; set; }
         public Action<String> OnReceived { get; set; }
-        public MetaTrader()
+        public ZeroMQ()
         {
             _publisherSocket = new PublisherSocket("@tcp://*:863");
             _pullSocket = new PullSocket("@tcp://*:831");
-            _netMQPoller = new NetMQPoller { _pullSocket };
+            _netMQPoller = new NetMQPoller { _publisherSocket, _pullSocket };
             _pullSocket.ReceiveReady += _pullSocket_ReceiveReady;
             _netMQPoller.RunAsync();
         }
@@ -31,19 +31,6 @@ namespace Dotrabot
                 OnReceived.Invoke(payload);
             }
         }
-
-        //public void ReceiveAsync(Action<String> onReceived)
-        //{
-
-        //    new Task(() =>
-        //    {
-        //        while (true)
-        //        {
-                   
-
-        //        }
-        //    }, TaskCreationOptions.LongRunning).Start();
-        //}
 
         public Task SendAsync(string topic, string payload)
         {
