@@ -88,8 +88,7 @@ namespace Dotrabot.Application
 
             await _stompClient.ConnectAsync(header);
 
-
-            _metaTrader.ReceiveAsync((Action<string>)(async (message) =>
+            _metaTrader.OnReceived = (Action<string>)(async (message) =>
             {
                 if (message.Contains("\"type\":\"initialize\""))
                 {
@@ -110,7 +109,9 @@ namespace Dotrabot.Application
                 if (string.IsNullOrEmpty(message))
                     return;
                 await _stompClient.SendAsync(configuration.middleware.Topic, message);
-            }));
+            });
+
+            //_metaTrader.ReceiveAsync();
 
 
         }

@@ -10,31 +10,40 @@ namespace Dotrabot
     {
         private PublisherSocket _publisherSocket;
         private PullSocket _pullSocket;
+        private NetMQPoller _netMQPoller;
 
         public bool IsConnected { get; set; }
-
+        public Action<String> OnReceived { get; set; }
         public MetaTrader()
         {
             _publisherSocket = new PublisherSocket("@tcp://*:863");
             _pullSocket = new PullSocket("@tcp://*:831");
+            _netMQPoller = new NetMQPoller { _pullSocket };
+            _pullSocket.ReceiveReady += _pullSocket_ReceiveReady;
+            _netMQPoller.RunAsync();
         }
 
-
-        public void ReceiveAsync(Action<String> onReceived)
+        private void _pullSocket_ReceiveReady(object? sender, NetMQSocketEventArgs e)
         {
-            new Task(() =>
+            if (IsConnected)
             {
-                while (true)
-                {
-                    if (IsConnected)
-                    {
-                        string payload = _pullSocket.ReceiveFrameString();
-                        onReceived.Invoke(payload);
-                    }
-                  
-                }
-            }, TaskCreationOptions.LongRunning).Start();
+                string payload = _pullSocket.ReceiveFrameString();
+                OnReceived.Invoke(payload);
+            }
         }
+
+        //public void ReceiveAsync(Action<String> onReceived)
+        //{
+
+        //    new Task(() =>
+        //    {
+        //        while (true)
+        //        {
+                   
+
+        //        }
+        //    }, TaskCreationOptions.LongRunning).Start();
+        //}
 
         public Task SendAsync(string topic, string payload)
         {
