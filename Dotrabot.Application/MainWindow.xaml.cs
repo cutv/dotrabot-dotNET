@@ -21,9 +21,10 @@ namespace Dotrabot.Application
     /// </summary>
     public partial class MainWindow : Window, IDotrabotClientConfig
     {
-        private ZeroMQ _metaTrader = new ZeroMQ();
+        private ZeroMQ _zeroMQ = new ZeroMQ();
 
         IStompClient _stompClient;
+        private TraderResult _trader;
         private readonly ConcurrentDictionary<String, byte> _dictionary = new ConcurrentDictionary<string, byte>();
         public MainWindow()
         {
@@ -33,24 +34,32 @@ namespace Dotrabot.Application
 
         public string Authorization => txtClientSecret.Text;
 
+#if DEV
+        public string BaseUrl => "http://localhost:8080";
+#else
+        public string BaseUrl => "http://14.225.207.213";
+#endif
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Dictionary<string, string> headers = new Dictionary<String, String>();
             headers.Add("Trader-Authorization", Authorization);
 #if DEV
-             _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader", headers: headers);
+
+            _stompClient = new Netina.Stomp.Client.StompClient("ws://localhost:8080/metatrader", headers: headers);
 #else
             _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader", headers: headers);
 #endif
             ConfigurationFactory configurationFactory = new ConfigurationFactory(this);
             ConfigurationResult configuration = await configurationFactory.FindLatest();
-            //TraderFactory traderFactory = new TraderFactory(this);
-            //_trader = await traderFactory.findByMe();
-            // tblName.Text = _trader.Name;
 
             _stompClient.OnConnect += async (sender, message) =>
                 {
-                    _metaTrader.IsConnected = true;
+                    _zeroMQ.EnableReceiving = true;
+                    foreach (var key in _dictionary.Keys)
+                    {
+                        SubscribeTopicAsync(key);
+                    }
                     Debug.WriteLine("Connected");
                     foreach (var item in configuration.middleware.subscribe_topics)
                     {
@@ -60,11 +69,15 @@ namespace Dotrabot.Application
                             {
                                 var payload = message.Body;
                                 if (payload != null)
-                                    _metaTrader.SendAsync(payload);
+                                    _zeroMQ.SendAsync(payload);
                                 Debug.WriteLine(payload);
                             });
                         _dictionary.TryAdd(item, 0);
                     }
+                    
+                  
+
+
 
 
                 };
@@ -74,19 +87,19 @@ namespace Dotrabot.Application
             };
             _stompClient.OnClose += (sender, message) =>
             {
-               _metaTrader.IsConnected=false;
+                _zeroMQ.EnableReceiving = false;
                 Debug.WriteLine("OnClose" + message.ToString());
             };
             _stompClient.OnReconnect += (sender, message) =>
             {
-                _dictionary.Clear();
-                Debug.WriteLine("OnReconnect" + message.ToString());
+                Debug.WriteLine("OnReconnect " + message.ToString());
+              
             };
             Dictionary<string, string> header = new Dictionary<String, String>();
 
             await _stompClient.ConnectAsync(header);
 
-            _metaTrader.OnReceived = (Action<string>)(async (message) =>
+            _zeroMQ.OnReceived = (Action<string>)(async (message) =>
             {
                 if (message.Contains("\"type\":\"initialize\""))
                 {
@@ -125,7 +138,7 @@ namespace Dotrabot.Application
                     String server = (String)jObject.SelectToken("server");
                     String login = (String)jObject.SelectToken("login");
                     String topic = $"/servers/{server}/traders/{login}";
-                    _metaTrader.SendAsync(topic, payload);
+                    _zeroMQ.SendAsync(topic, payload);
                     Debug.WriteLine(payload);
 
                 }

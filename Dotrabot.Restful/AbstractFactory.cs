@@ -16,18 +16,9 @@ namespace Dotrabot.Restful
         public AbstractFactory(String resource, IDotrabotClientConfig config)
         {
             _config = config;
-#if DEV
-            var options = new RestClientOptions($"http://localhost:8080/api/{resource}")
-            {
-            };
-#else
-            var options = new RestClientOptions($"http://14.225.207.213/api/{resource}")
-            {
-            };
-            _restClient = new RestClient(options);
+            _restClient = new RestClient(new RestClientOptions($"{_config.BaseUrl}/api/{resource}"));
             _restClient.AddDefaultHeader("Trader-Authorization", _config.Authorization);
         }
-#endif
         public T ResponseWith<T>(RestResponse<Result<T>> response)
         {
             return response.StatusCode switch

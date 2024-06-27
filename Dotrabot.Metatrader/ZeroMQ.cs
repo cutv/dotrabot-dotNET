@@ -13,6 +13,7 @@ namespace Dotrabot
         private NetMQPoller _netMQPoller;
 
         public bool Receive { get; set; }
+        public bool EnableReceiving { get; set; }
         public Action<String> OnReceived { get; set; }
         public ZeroMQ()
         {
@@ -25,7 +26,7 @@ namespace Dotrabot
 
         private void _pullSocket_ReceiveReady(object? sender, NetMQSocketEventArgs e)
         {
-            if (IsConnected)
+            if (EnableReceiving)
             {
                 string payload = _pullSocket.ReceiveFrameString();
                 OnReceived.Invoke(payload);

@@ -8,7 +8,6 @@ namespace Dotrabot.StompClient
 {
     public static class StompClientExtension
     {
-        public static String Authorization;
         public static Task SubscribeMeAsync<T>(this IStompClient stompClient, long traderId, Action<T> onMessage)
         {
             return stompClient.SubscribeAsync<T>($"/traders/{traderId}", new Dictionary<String, String>(), (sender, message) =>
@@ -35,7 +34,6 @@ namespace Dotrabot.StompClient
             Dictionary<String, String> headers = new Dictionary<string, string>();
             headers.Add("content-type", "application/json;charset=UTF-8");
             headers.Add("content-length", Encoding.UTF8.GetByteCount(payload).ToString());
-            //headers.Add("Authorization", Authorization);
             return headers;
         }
 

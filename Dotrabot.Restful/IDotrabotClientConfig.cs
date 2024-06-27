@@ -9,5 +9,6 @@ namespace Dotrabot.Restful
     public interface IDotrabotClientConfig
     {
         public String Authorization { get; }
+        public String BaseUrl { get; }
     }
 }
