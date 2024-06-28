@@ -50,8 +50,8 @@ namespace Dotrabot.Application
 #else
             _stompClient = new Netina.Stomp.Client.StompClient("ws://14.225.207.213/metatrader", headers: headers);
 #endif
-            ConfigurationFactory configurationFactory = new ConfigurationFactory(this);
-            ConfigurationResult configuration = await configurationFactory.FindLatest();
+            //ConfigurationFactory configurationFactory = new ConfigurationFactory(this);
+            //ConfigurationResult configuration = await configurationFactory.FindLatest();
 
             _stompClient.OnConnect += async (sender, message) =>
                 {
@@ -61,19 +61,19 @@ namespace Dotrabot.Application
                         SubscribeTopicAsync(key);
                     }
                     Debug.WriteLine("Connected");
-                    foreach (var item in configuration.middleware.subscribe_topics)
-                    {
-                        if (_dictionary.ContainsKey(item))
-                            continue;
-                        await _stompClient.SubscribeAsync(item, new Dictionary<String, String>(), (sender, message) =>
-                            {
-                                var payload = message.Body;
-                                if (payload != null)
-                                    _zeroMQ.SendAsync(payload);
-                                Debug.WriteLine(payload);
-                            });
-                        _dictionary.TryAdd(item, 0);
-                    }
+                    //foreach (var item in configuration.middleware.subscribe_topics)
+                    //{
+                    //    if (_dictionary.ContainsKey(item))
+                    //        continue;
+                    //    await _stompClient.SubscribeAsync(item, new Dictionary<String, String>(), (sender, message) =>
+                    //        {
+                    //            var payload = message.Body;
+                    //            if (payload != null)
+                    //                _zeroMQ.SendAsync(payload);
+                    //            Debug.WriteLine(payload);
+                    //        });
+                    //    _dictionary.TryAdd(item, 0);
+                    //}
                     
                   
 
@@ -119,7 +119,7 @@ namespace Dotrabot.Application
                 Debug.WriteLine(message);
                 if (string.IsNullOrEmpty(message))
                     return;
-                await _stompClient.SendAsync(configuration.middleware.Topic, message);
+                await _stompClient.SendAsync("/", message);
             });
 
             //_metaTrader.ReceiveAsync();

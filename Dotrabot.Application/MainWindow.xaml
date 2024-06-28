@@ -13,7 +13,7 @@
             <RowDefinition/>
             <RowDefinition Height="9*"/>
         </Grid.RowDefinitions>
-        <TextBox Name="txtClientSecret" HorizontalAlignment="Left" Text="3f0a7574e36c6864955ed3669dbc6c56" MaxHeight="30"/>
+        <TextBox Name="txtClientSecret" HorizontalAlignment="Left" Text="$1$JwRh15lq$LqQm1XUy3fAZJ66xIpRCQ1" MaxHeight="30"/>
         <TextBlock Name="tblName"  Text="fsdfsdfsdfsdf" HorizontalAlignment="Left"  MaxHeight="30" Grid.Row="1"/>
         <!--<TabControl>
             <TabItem Header="General">
