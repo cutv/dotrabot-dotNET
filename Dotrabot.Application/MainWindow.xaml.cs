@@ -32,12 +32,14 @@ namespace Dotrabot.Application
             Loaded += MainWindow_Loaded;
         }
 
-        public string Authorization => txtClientSecret.Text;
+
 
 #if DEV
+        public string Authorization => "$1$KppkjnbW$KimFezD2INck9HZqiG9R11";
         public string BaseUrl => "http://localhost:8080";
 #else
         public string BaseUrl => "http://14.225.207.213";
+        public string Authorization => txtClientSecret.Text;
 #endif
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -74,8 +76,8 @@ namespace Dotrabot.Application
                     //        });
                     //    _dictionary.TryAdd(item, 0);
                     //}
-                    
-                  
+
+
 
 
 
@@ -93,7 +95,7 @@ namespace Dotrabot.Application
             _stompClient.OnReconnect += (sender, message) =>
             {
                 Debug.WriteLine("OnReconnect " + message.ToString());
-              
+
             };
             Dictionary<string, string> header = new Dictionary<String, String>();
 
