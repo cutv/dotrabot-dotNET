@@ -30,6 +30,15 @@ namespace Dotrabot.Application
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+            Closed += MainWindow_Closed
+                ;
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            _stompClient.DisconnectAsync();
+            _stompClient.Dispose();
+            _zeroMQ.Dispose();
         }
 
 

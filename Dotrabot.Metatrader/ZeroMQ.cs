@@ -6,7 +6,7 @@ using System.Net.WebSockets;
 
 namespace Dotrabot
 {
-    public class ZeroMQ
+    public class ZeroMQ :IDisposable
     {
         private PublisherSocket _publisherSocket;
         private PullSocket _pullSocket;
@@ -40,6 +40,13 @@ namespace Dotrabot
         public Task SendAsync(string payload)
         {
             return Task.Run(() => _publisherSocket.SendMoreFrame("").SendFrame(payload));
+        }
+
+        public void Dispose()
+        {
+            _netMQPoller.Stop();
+            _publisherSocket.Dispose();
+            _pullSocket.Dispose();
         }
     }
 }
