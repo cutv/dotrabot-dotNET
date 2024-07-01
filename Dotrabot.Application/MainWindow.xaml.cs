@@ -30,8 +30,7 @@ namespace Dotrabot.Application
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
-            Closed += MainWindow_Closed
-                ;
+            Closed += MainWindow_Closed;
         }
 
         private void MainWindow_Closed(object? sender, EventArgs e)
